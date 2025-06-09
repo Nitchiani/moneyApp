@@ -1,10 +1,10 @@
 import Buttons from "@/components/Buttons";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
+
 const { width: screenWidth } = Dimensions.get("window");
 
 const DESIGN_WIDTH = 393;
 const DESIGN_HEIGHT = 526;
-
 const calculatedHeight = (DESIGN_HEIGHT / DESIGN_WIDTH) * screenWidth;
 
 export default function Index() {

@@ -1,12 +1,27 @@
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const CustomButton = ({ text, variant = "blue" }) => {
+type ButtonsProps = {
+  text: any;
+  variant?: string;
+  onPress?: () => void;
+};
+
+const CustomButton = ({ text, variant = "blue", onPress }: ButtonsProps) => {
+  const router = useRouter();
   const isBlue = variant === "blue";
+  const handlePress = () => {
+    if (onPress) {
+      onPress();
+    } else if (text === "Sign In") {
+      router.push("/signIn");
+    }
+  };
 
   return (
-    <TouchableOpacity style={styles.buttonWrapper}>
+    <TouchableOpacity style={styles.buttonWrapper} onPress={handlePress}>
       {isBlue ? (
         <LinearGradient
           colors={["#6075FF", "#1433FF"]}
