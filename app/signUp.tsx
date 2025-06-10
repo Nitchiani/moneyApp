@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { IconButton } from "react-native-paper";
 
-const SignIn = () => {
+const SignUp = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
@@ -65,7 +65,7 @@ const SignIn = () => {
       </View>
 
       <View style={styles.button}>
-        <Buttons text="Sign In" variant="blue" />
+        <Buttons text="Sign Up" variant="blue" />
       </View>
     </View>
   );
@@ -148,4 +148,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignIn;
+export default SignUp;

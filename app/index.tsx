@@ -1,4 +1,5 @@
 import Buttons from "@/components/Buttons";
+import { useRouter } from "expo-router";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 
 const { width: screenWidth } = Dimensions.get("window");
@@ -8,6 +9,16 @@ const DESIGN_HEIGHT = 526;
 const calculatedHeight = (DESIGN_HEIGHT / DESIGN_WIDTH) * screenWidth;
 
 export default function Index() {
+  const router = useRouter();
+
+  const handleSignIn = () => {
+    router.push("/signIn");
+  };
+
+  const handleSignUp = () => {
+    router.push("/signUp");
+  };
+
   return (
     <View style={styles.container}>
       <View>
@@ -17,8 +28,8 @@ export default function Index() {
         />
       </View>
       <View style={styles.buttonsWrapper}>
-        <Buttons text="Sign In" variant="blue" />
-        <Buttons text="Sign Up" variant="transparent" />
+        <Buttons text="Sign In" variant="blue" onPress={handleSignIn} />
+        <Buttons text="Sign Up" variant="transparent" onPress={handleSignUp} />
       </View>
     </View>
   );
