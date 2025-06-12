@@ -2,6 +2,10 @@ import Buttons from "@/components/Buttons";
 import React from "react";
 import {
   Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -15,63 +19,164 @@ const SignIn = () => {
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
 
+  // Validation states
+  const [emailError, setEmailError] = React.useState(false);
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
+  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
+
+  // Keyboard state
+  const [keyboardVisible, setKeyboardVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener?.remove();
+      keyboardDidShowListener?.remove();
+    };
+  }, []);
+
+  // Email validation function
+  const validateEmail = (text) => {
+    setEmail(text);
+    if (text.length > 0) {
+      // Email regex pattern to validate proper email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const isValid = emailRegex.test(text);
+      setEmailError(!isValid);
+      if (!isValid) {
+        setEmailErrorMessage("The email address is incomplete.");
+      } else {
+        setEmailErrorMessage("");
+      }
+    } else {
+      setEmailError(false);
+      setEmailErrorMessage("");
+    }
+  };
+
+  // Password validation function
+  const validatePassword = (text) => {
+    setPassword(text);
+    if (text.length > 0 && text.length < 6) {
+      setPasswordError(true);
+      setPasswordErrorMessage("Must contain special characters - !, @, *");
+    } else {
+      setPasswordError(false);
+      setPasswordErrorMessage("");
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Image
-        source={require("../assets/images/background2.png")}
-        style={styles.backgroundImage}
-      />
-      <Text style={styles.title}>Sign In</Text>
-      <View style={styles.inputs}>
-        <View style={styles.inputContainer}>
-          {email.length > 0 && <Text style={styles.label}>Email Address</Text>}
-          <TextInput
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            placeholder="Email Address"
-            placeholderTextColor="#999"
-          />
-          {email.length > 0 && <Text style={styles.checkmark}>✓</Text>}
-        </View>
-
-        <View style={styles.inputContainer}>
-          {password.length > 0 && <Text style={styles.label}>Password</Text>}
-          <View style={styles.passwordContainer}>
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              style={[styles.input, styles.passwordInput]}
-              secureTextEntry={!showPassword}
-              placeholder="Password"
-              placeholderTextColor="#999"
-            />
-            {password.length > 0 && (
-              <IconButton
-                icon={showPassword ? "eye-off" : "eye"}
-                size={20}
-                iconColor="#999"
-                onPress={() => setShowPassword(!showPassword)}
-                style={styles.eyeIcon}
-              />
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Image
+          source={require("../assets/images/background2.png")}
+          style={[
+            styles.backgroundImage,
+            keyboardVisible && styles.backgroundImageKeyboard,
+          ]}
+        />
+        <Text style={[styles.title, keyboardVisible && styles.titleKeyboard]}>
+          Sign In
+        </Text>
+        <View style={[styles.inputs, keyboardVisible && styles.inputsKeyboard]}>
+          <View style={styles.inputContainer}>
+            {email.length > 0 && (
+              <Text style={styles.label}>Email Address</Text>
             )}
+            <View style={styles.inputWrapper}>
+              <TextInput
+                value={email}
+                onChangeText={validateEmail}
+                style={[styles.input, emailError && styles.inputError]}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                placeholder={email.length > 0 ? "" : "Email Address"}
+                placeholderTextColor="#999"
+              />
+              {email.length > 0 && !emailError && (
+                <Text style={styles.checkmark}>✓</Text>
+              )}
+            </View>
+            {emailError && emailErrorMessage ? (
+              <Text style={styles.errorText}>{emailErrorMessage}</Text>
+            ) : null}
           </View>
-        </View>
-        <TouchableOpacity style={styles.forgotPassword}>
-          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-        </TouchableOpacity>
-      </View>
 
-      <View style={styles.button}>
-        <Buttons text="Sign In" variant="blue" />
-      </View>
-    </View>
+          <View style={styles.inputContainer}>
+            {password.length > 0 && <Text style={styles.label}>Password</Text>}
+            <View style={styles.passwordContainer}>
+              <TextInput
+                value={password}
+                onChangeText={validatePassword}
+                style={[
+                  styles.input,
+                  styles.passwordInput,
+                  passwordError && styles.inputError,
+                ]}
+                secureTextEntry={!showPassword}
+                placeholder={password.length > 0 ? "" : "Password"}
+                placeholderTextColor="#999"
+              />
+              {password.length > 0 && (
+                <IconButton
+                  icon={showPassword ? "eye-off" : "eye"}
+                  size={20}
+                  iconColor="#999"
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIcon}
+                />
+              )}
+            </View>
+            {passwordError && passwordErrorMessage ? (
+              <Text style={styles.errorText}>{passwordErrorMessage}</Text>
+            ) : null}
+          </View>
+
+          <TouchableOpacity style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={[styles.button, keyboardVisible && styles.buttonKeyboard]}>
+          <Buttons text="Sign In" variant="blue" />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "space-between",
+    position: "relative",
+    minHeight: "100%",
+  },
   backgroundImage: {
     position: "absolute",
     width: 435,
@@ -79,11 +184,9 @@ const styles = StyleSheet.create({
     top: -99,
     left: -62,
   },
-  container: {
-    position: "relative",
-    height: "100%",
-    justifyContent: "space-between",
-    backgroundColor: "#fff",
+  backgroundImageKeyboard: {
+    top: -250,
+    opacity: 0.5,
   },
   title: {
     top: 331,
@@ -92,21 +195,36 @@ const styles = StyleSheet.create({
     marginHorizontal: 40,
     color: "rgba(58, 58, 58, 1)",
   },
+  titleKeyboard: {
+    top: 180,
+  },
   button: {
     bottom: 75,
+  },
+  buttonKeyboard: {
+    bottom: 20,
+    marginBottom: 10,
   },
   inputs: {
     marginTop: 114,
     gap: 25,
     marginHorizontal: 35,
   },
+  inputsKeyboard: {
+    marginTop: 40,
+  },
   inputContainer: {
     position: "relative",
+    marginBottom: 5,
   },
   label: {
     fontSize: 14,
     color: "rgba(185, 185, 185, 1)",
     fontWeight: "400",
+    marginBottom: 5,
+  },
+  inputWrapper: {
+    position: "relative",
   },
   input: {
     backgroundColor: "transparent",
@@ -115,7 +233,12 @@ const styles = StyleSheet.create({
     borderBottomColor: "rgba(39, 67, 253, 1)",
     fontSize: 14,
     color: "#333",
+    paddingBottom: 8,
+    paddingTop: 8,
     outlineWidth: 0,
+  },
+  inputError: {
+    borderBottomColor: "#FF0000",
   },
   passwordContainer: {
     position: "relative",
@@ -138,8 +261,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+  errorText: {
+    color: "#FF0000",
+    fontSize: 12,
+    marginTop: 5,
+    fontWeight: "400",
+  },
   forgotPassword: {
     alignSelf: "flex-start",
+    marginTop: 10,
   },
   forgotPasswordText: {
     color: "rgba(43, 71, 252, 1)",
