@@ -1,12 +1,66 @@
 import Buttons from "@/components/Buttons";
-import React from "react";
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import React, { useRef, useState } from "react";
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 const { width: screenWidth } = Dimensions.get("window");
 
-const index = () => {
+const slides = [
+  {
+    id: "1",
+    image: require("../assets/images/backgroundImage.png"),
+    title: "Save your money conveniently.",
+    bio: "Get 5% cash back for each transaction and spend it easily.",
+    buttonText: "Next",
+  },
+  {
+    id: "2",
+    image: require("../assets/images/backgroundImage2.png"),
+    title: "Secure your money for free and get rewards.",
+    bio: "Get the most secure payment app ever and enjoy it.",
+    buttonText: "Next",
+  },
+  {
+    id: "3",
+    image: require("../assets/images/backgroundImage3.png"),
+    title: "Enjoy commission-free stock trading.",
+    bio: "Online investing has never been easier than it is right now.",
+    buttonText: "Get Started",
+  },
+];
+
+const Index = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const flatListRef = useRef(null);
+  const router = useRouter();
+
+  const handleNext = () => {
+    if (currentIndex === slides.length - 1) {
+      router.push("/signUp");
+      return;
+    }
+    flatListRef.current?.scrollToIndex({
+      index: currentIndex + 1,
+      animated: true,
+    });
+  };
+
+  const renderItem = ({ item, index }) => (
+    <View style={styles.slide}>
+      <Image source={item.image} style={styles.backgroundImage} />
+    </View>
+  );
+
   return (
     <View style={styles.container}>
+      <View style={styles.background}></View>
       <View>
         <Image
           source={require("../assets/images/logo.png")}
@@ -14,37 +68,50 @@ const index = () => {
         />
       </View>
 
-      <View>
-        <Image
-          source={require("../assets/images/backgroundImage.png")}
-          style={styles.backgroundImage}
-        />
-      </View>
+      <FlatList
+        ref={flatListRef}
+        data={slides}
+        renderItem={renderItem}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={(event) => {
+          const newIndex = Math.round(
+            event.nativeEvent.contentOffset.x / screenWidth
+          );
+          setCurrentIndex(newIndex);
+        }}
+      />
 
       <View style={styles.texts}>
-        <Text style={styles.title}>Save your money conveniently.</Text>
-        <Text style={styles.bio}>
-          Get 5% cash back for each transaction and spend it easily.
-        </Text>
+        <Text style={styles.title}>{slides[currentIndex].title}</Text>
+        <Text style={styles.bio}>{slides[currentIndex].bio}</Text>
       </View>
 
       <View style={styles.bottomSection}>
         <View style={styles.dots}>
-          <View style={styles.activeDot}></View>
-          <View style={styles.inActiveDot}></View>
-          <View style={styles.inActiveDot}></View>
+          {slides.map((_, index) => (
+            <View
+              key={index}
+              style={
+                index === currentIndex ? styles.activeDot : styles.inActiveDot
+              }
+            />
+          ))}
         </View>
         <View style={styles.button}>
-          <Buttons text="Next" variant="blue" />
+          <Buttons
+            text={slides[currentIndex].buttonText}
+            variant="blue"
+            onPress={handleNext}
+          />
         </View>
       </View>
-
-      <View style={styles.background}></View>
     </View>
   );
 };
 
-export default index;
+export default Index;
 
 const styles = StyleSheet.create({
   container: {
@@ -68,12 +135,21 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     alignSelf: "center",
   },
+  slide: {
+    width: screenWidth,
+    alignItems: "center",
+  },
+  slideContent: {
+    position: "relative",
+    alignItems: "center",
+  },
   backgroundImage: {
     width: 280,
     height: 202,
     resizeMode: "cover",
-    alignSelf: "center",
-    marginTop: 60,
+    position: "absolute",
+    top: 60,
+    zIndex: 1,
   },
   title: {
     fontWeight: 700,
@@ -90,11 +166,11 @@ const styles = StyleSheet.create({
     width: screenWidth * 0.6,
   },
   texts: {
-    paddingTop: 125,
-    zIndex: 1,
+    paddingTop: 0,
     paddingHorizontal: 30,
     flex: 1,
     gap: 26,
+    zIndex: 1,
   },
   dots: {
     flexDirection: "row",
