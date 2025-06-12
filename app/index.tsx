@@ -199,9 +199,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 30,
+    paddingLeft: 30,
   },
   button: {
-    width: 193,
+    width: 203,
   },
 });

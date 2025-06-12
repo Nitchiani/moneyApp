@@ -10,6 +10,7 @@ type ButtonsProps = {
 
 const CustomButton = ({ text, variant = "blue", onPress }: ButtonsProps) => {
   const isBlue = variant === "blue";
+  const shouldShowArrow = text?.toString().toLowerCase() !== "get started";
 
   return (
     <TouchableOpacity style={styles.buttonWrapper} onPress={onPress}>
@@ -22,10 +23,12 @@ const CustomButton = ({ text, variant = "blue", onPress }: ButtonsProps) => {
         >
           <View style={styles.buttonContent}>
             <Text style={styles.blueText}>{text}</Text>
-            <Image
-              source={require("../assets/images/whiteArrow.png")}
-              style={styles.arrow}
-            />
+            {shouldShowArrow && (
+              <Image
+                source={require("../assets/images/whiteArrow.png")}
+                style={styles.arrow}
+              />
+            )}
           </View>
           <Image
             source={require("../assets/images/topMask.png")}
@@ -36,10 +39,12 @@ const CustomButton = ({ text, variant = "blue", onPress }: ButtonsProps) => {
         <View style={[styles.button, styles.transparentButton]}>
           <View style={styles.buttonContent}>
             <Text style={styles.transparentText}>{text}</Text>
-            <Image
-              source={require("../assets/images/blueArrow.png")}
-              style={styles.arrow}
-            />
+            {shouldShowArrow && (
+              <Image
+                source={require("../assets/images/blueArrow.png")}
+                style={styles.arrow}
+              />
+            )}
           </View>
           <Image
             source={require("../assets/images/bottomMask.png")}
@@ -70,6 +75,7 @@ const styles = StyleSheet.create({
   buttonContent: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   blueText: {
     color: "#fff",
