@@ -61,10 +61,10 @@ const SignUp = () => {
   // Password validation function (you can customize this based on your requirements)
   const validatePassword = (text) => {
     setPassword(text);
-    // Example: password must be at least 6 characters
-    // You can modify this validation based on your specific requirements
-    if (text.length > 0 && text.length < 6) {
-      setPasswordError(true);
+    // Check if password contains special characters !, @, *
+    if (text.length > 0) {
+      const hasSpecialChars = /[!@*]/.test(text);
+      setPasswordError(!hasSpecialChars);
     } else {
       setPasswordError(false);
     }
@@ -88,7 +88,7 @@ const SignUp = () => {
           ]}
         />
         <Text style={[styles.title, keyboardVisible && styles.titleKeyboard]}>
-          Sign In
+          Sign Up
         </Text>
         <View style={[styles.inputs, keyboardVisible && styles.inputsKeyboard]}>
           <View style={styles.inputContainer}>
@@ -106,6 +106,11 @@ const SignUp = () => {
             />
             {email.length > 0 && !emailError && (
               <Text style={styles.checkmark}>✓</Text>
+            )}
+            {emailError && (
+              <Text style={styles.errorText}>
+                The email address is incomplete.
+              </Text>
             )}
           </View>
 
@@ -134,6 +139,11 @@ const SignUp = () => {
                 />
               )}
             </View>
+            {passwordError && (
+              <Text style={styles.errorText}>
+                Must contain special characters - !, @, *
+              </Text>
+            )}
           </View>
           <TouchableOpacity style={styles.forgotPassword}>
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
@@ -141,7 +151,7 @@ const SignUp = () => {
         </View>
 
         <View style={[styles.button, keyboardVisible && styles.buttonKeyboard]}>
-          <Buttons text="Sign In" variant="blue" />
+          <Buttons text="Sign Up" variant="transparent" />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -171,14 +181,14 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   title: {
-    top: 331,
+    top: 294,
     fontWeight: "700",
     fontSize: 28,
     marginHorizontal: 40,
     color: "rgba(58, 58, 58, 1)",
   },
   titleKeyboard: {
-    top: 180,
+    top: 120,
   },
   button: {
     bottom: 75,
@@ -242,6 +252,12 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     color: "rgba(43, 71, 252, 1)",
     fontSize: 16,
+    fontWeight: "400",
+  },
+  errorText: {
+    color: "#FF0000",
+    fontSize: 12,
+    marginTop: 5,
     fontWeight: "400",
   },
 });

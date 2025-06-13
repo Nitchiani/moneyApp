@@ -43,7 +43,8 @@ const Index = () => {
 
   const handleNext = () => {
     if (currentIndex === slides.length - 1) {
-      router.push("/signUp");
+      // Changed from "/signUp" to "/welcome"
+      router.push("/welcome");
       return;
     }
     flatListRef.current?.scrollToIndex({
@@ -202,6 +203,6 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
   },
   button: {
-    width: 203,
+    width: 200,
   },
 });
