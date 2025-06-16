@@ -1,4 +1,5 @@
 import Buttons from "@/components/Buttons";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
   Image,
@@ -15,9 +16,14 @@ import {
 import { IconButton } from "react-native-paper";
 
 const SignIn = () => {
+  const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
+
+  const handleForgotPassword = () => {
+    router.push("/otp");
+  };
 
   // Validation states
   const [emailError, setEmailError] = React.useState(false);
@@ -47,7 +53,7 @@ const SignIn = () => {
   }, []);
 
   // Email validation function
-  const validateEmail = (text) => {
+  const validateEmail = (text: string) => {
     setEmail(text);
     if (text.length > 0) {
       // Email regex pattern to validate proper email format
@@ -59,7 +65,7 @@ const SignIn = () => {
   };
 
   // Password validation function (you can customize this based on your requirements)
-  const validatePassword = (text) => {
+  const validatePassword = (text: string) => {
     setPassword(text);
     // Check if password contains special characters !, @, *
     if (text.length > 0) {
@@ -145,7 +151,10 @@ const SignIn = () => {
               </Text>
             )}
           </View>
-          <TouchableOpacity style={styles.forgotPassword}>
+          <TouchableOpacity
+            style={styles.forgotPassword}
+            onPress={handleForgotPassword}
+          >
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
         </View>
