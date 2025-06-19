@@ -1,5 +1,5 @@
 import OtpButton from "@/components/OtpButton";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Image,
   Platform,
@@ -13,10 +13,28 @@ import {
 const Otp = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState(["", "", "", ""]);
+  const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
   const handleGetOtp = () => {
     setIsOtpSent(true);
+  };
+
+  const handleOtpChange = (value, index) => {
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // Auto-focus next input
+    if (value && index < 3) {
+      otpRefs[index + 1].current?.focus();
+    }
+  };
+
+  const handleKeyPress = (e, index) => {
+    if (e.nativeEvent.key === "Backspace" && !otp[index] && index > 0) {
+      otpRefs[index - 1].current?.focus();
+    }
   };
 
   return (
@@ -36,7 +54,7 @@ const Otp = () => {
         </Text>
         <View style={styles.inputSection}>
           <Text style={styles.inputLabel}>
-            {isOtpSent ? "Enter OTP" : "Enter Mobile Number"}
+            {isOtpSent ? "" : "Enter Mobile Number"}
           </Text>
           <View
             style={[
@@ -44,22 +62,47 @@ const Otp = () => {
               !isOtpSent && styles.inputContainerWithBorder,
             ]}
           >
-            <View style={styles.inputWrapper}>
-              <TextInput
-                value={isOtpSent ? otp : phoneNumber}
-                onChangeText={isOtpSent ? setOtp : setPhoneNumber}
-                style={[styles.input, isOtpSent && styles.otpInput]}
-                keyboardType="number-pad"
-                placeholder={isOtpSent ? "____" : "+995 555 551 452"}
-                placeholderTextColor="rgba(153, 153, 153, 0.7)"
-                textAlign="center"
-                textAlignVertical="center"
-                maxLength={isOtpSent ? 4 : 16}
-                {...(Platform.OS === "android"
-                  ? { includeFontPadding: false }
-                  : {})}
-              />
-            </View>
+            {!isOtpSent ? (
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  value={phoneNumber}
+                  onChangeText={setPhoneNumber}
+                  style={styles.input}
+                  keyboardType="number-pad"
+                  placeholder="+995 555 551 452"
+                  placeholderTextColor="rgba(153, 153, 153, 0.7)"
+                  textAlign="center"
+                  textAlignVertical="center"
+                  maxLength={16}
+                  {...(Platform.OS === "android"
+                    ? { includeFontPadding: false }
+                    : {})}
+                />
+              </View>
+            ) : (
+              <View style={styles.otpContainer}>
+                {otp.map((digit, index) => (
+                  <TextInput
+                    key={index}
+                    ref={otpRefs[index]}
+                    value={digit}
+                    onChangeText={(value) => handleOtpChange(value, index)}
+                    onKeyPress={(e) => handleKeyPress(e, index)}
+                    style={[
+                      styles.otpInput,
+                      digit ? styles.otpInputActive : styles.otpInputInactive,
+                    ]}
+                    keyboardType="number-pad"
+                    maxLength={1}
+                    textAlign="center"
+                    textAlignVertical="center"
+                    {...(Platform.OS === "android"
+                      ? { includeFontPadding: false }
+                      : {})}
+                  />
+                ))}
+              </View>
+            )}
           </View>
           {isOtpSent && (
             <TouchableOpacity style={styles.resendContainer}>
@@ -115,17 +158,14 @@ const styles = StyleSheet.create({
   inputSection: {
     width: "100%",
     alignItems: "center",
-    marginTop: 20,
   },
   inputLabel: {
     color: "#B9B9B9",
     fontSize: 12,
-    marginBottom: 8,
   },
   inputContainer: {
     width: "100%",
     alignItems: "center",
-    paddingVertical: 8,
   },
   inputContainerWithBorder: {
     borderBottomWidth: 1,
@@ -147,11 +187,28 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     width: "100%",
   },
+  otpContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+  },
   otpInput: {
+    width: 48,
+    height: 48,
     fontSize: 24,
-    letterSpacing: 16,
-    width: "60%",
+    color: "#333",
     textAlign: "center",
+    textAlignVertical: "center",
+    borderBottomWidth: 1,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+  },
+  otpInputInactive: {
+    borderBottomColor: "rgba(185, 185, 185, 1)",
+  },
+  otpInputActive: {
+    borderBottomColor: "rgba(39, 67, 253, 1)",
   },
   resendContainer: {
     marginTop: 16,

@@ -14,24 +14,19 @@ import {
   View,
 } from "react-native";
 import { IconButton } from "react-native-paper";
-
 const SignIn = () => {
   const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
-
   const handleForgotPassword = () => {
     router.push("/otp");
   };
-
   // Validation states
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
-
   // Keyboard state
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
-
   React.useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -45,13 +40,11 @@ const SignIn = () => {
         setKeyboardVisible(false);
       }
     );
-
     return () => {
       keyboardDidHideListener?.remove();
       keyboardDidShowListener?.remove();
     };
   }, []);
-
   // Email validation function
   const validateEmail = (text: string) => {
     setEmail(text);
@@ -63,7 +56,6 @@ const SignIn = () => {
       setEmailError(false);
     }
   };
-
   // Password validation function (you can customize this based on your requirements)
   const validatePassword = (text: string) => {
     setPassword(text);
@@ -75,16 +67,17 @@ const SignIn = () => {
       setPasswordError(false);
     }
   };
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        bounces={false}
+        overScrollMode="never"
       >
         <Image
           source={require("../assets/images/background2.png")}
@@ -119,7 +112,6 @@ const SignIn = () => {
               </Text>
             )}
           </View>
-
           <View style={styles.inputContainer}>
             {password.length > 0 && <Text style={styles.label}>Password</Text>}
             <View style={styles.passwordContainer}>
@@ -158,7 +150,6 @@ const SignIn = () => {
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
         </View>
-
         <View style={[styles.button, keyboardVisible && styles.buttonKeyboard]}>
           <Buttons text="Sign In" variant="blue" />
         </View>
@@ -166,7 +157,6 @@ const SignIn = () => {
     </KeyboardAvoidingView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -176,7 +166,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "space-between",
     position: "relative",
-    minHeight: "100%",
+    backgroundColor: "#fff",
   },
   backgroundImage: {
     position: "absolute",
@@ -185,26 +175,22 @@ const styles = StyleSheet.create({
     top: -99,
     left: -62,
   },
-  backgroundImageKeyboard: {
-    top: -250,
-    opacity: 0.5,
-  },
+  backgroundImageKeyboard: {},
   title: {
-    top: 294,
+    top: 311,
     fontWeight: "700",
     fontSize: 28,
-    marginHorizontal: 40,
+    marginHorizontal: 35,
     color: "rgba(58, 58, 58, 1)",
   },
   titleKeyboard: {
-    top: 120,
+    top: 311,
   },
   button: {
     bottom: 75,
   },
   buttonKeyboard: {
-    bottom: 20,
-    marginBottom: 10,
+    bottom: 0,
   },
   inputs: {
     marginTop: 114,
@@ -270,5 +256,4 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
 });
-
 export default SignIn;
