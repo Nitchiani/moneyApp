@@ -75,6 +75,6 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     zIndex: 1,
-    transform: [{ scaleX: -1 }], // Flip horizontally to mirror the image
+    transform: [{ scaleX: -1 }],
   },
 });

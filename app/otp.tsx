@@ -1,4 +1,5 @@
 import OtpButton from "@/components/OtpButton";
+import { useRouter } from "expo-router"; // Import useRouter
 import React, { useRef, useState } from "react";
 import {
   Image,
@@ -15,6 +16,7 @@ const Otp = () => {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+  const router = useRouter(); // Initialize useRouter
 
   const handleGetOtp = () => {
     setIsOtpSent(true);
@@ -35,6 +37,11 @@ const Otp = () => {
     if (e.nativeEvent.key === "Backspace" && !otp[index] && index > 0) {
       otpRefs[index - 1].current?.focus();
     }
+  };
+
+  const handleVerify = () => {
+    // You can add OTP verification logic here
+    router.push("/home"); // Navigate to /home after OTP verification
   };
 
   return (
@@ -116,7 +123,7 @@ const Otp = () => {
       </View>
       <OtpButton
         text={isOtpSent ? "Verify" : "Get OTP"}
-        onPress={isOtpSent ? undefined : handleGetOtp}
+        onPress={isOtpSent ? handleVerify : handleGetOtp} // Update onPress to handleVerify when OTP is sent
       />
     </View>
   );

@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import { IconButton } from "react-native-paper";
+
 const SignUp = () => {
   const router = useRouter();
   const [email, setEmail] = React.useState("");
@@ -22,9 +23,11 @@ const SignUp = () => {
   const handleForgotPassword = () => {
     router.push("/otp");
   };
+
   // Validation states
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
+
   // Keyboard state
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
   React.useEffect(() => {
@@ -45,28 +48,25 @@ const SignUp = () => {
       keyboardDidShowListener?.remove();
     };
   }, []);
+
   // Email validation function
   const validateEmail = (text: string) => {
     setEmail(text);
     if (text.length > 0) {
-      // Email regex pattern to validate proper email format
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       setEmailError(!emailRegex.test(text));
     } else {
       setEmailError(false);
     }
   };
-  // Password validation function (you can customize this based on your requirements)
+
+  // Password validation function
   const validatePassword = (text: string) => {
     setPassword(text);
-    // Check if password contains special characters !, @, *
-    if (text.length > 0) {
-      const hasSpecialChars = /[!@*]/.test(text);
-      setPasswordError(!hasSpecialChars);
-    } else {
-      setPasswordError(false);
-    }
+    const hasSpecialChars = /[!@*]/.test(text);
+    setPasswordError(!hasSpecialChars);
   };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -151,12 +151,17 @@ const SignUp = () => {
           </TouchableOpacity>
         </View>
         <View style={[styles.button, keyboardVisible && styles.buttonKeyboard]}>
-          <Buttons text="Sign Up" variant="blue" />
+          <Buttons
+            text="Sign Up"
+            variant="blue"
+            onPress={() => router.push("/profile")} // Navigate to /profile on button press
+          />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -256,4 +261,5 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
 });
+
 export default SignUp;
