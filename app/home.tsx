@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
 type Props = {};
 
 const MENU_ITEMS = [
@@ -13,6 +12,12 @@ const MENU_ITEMS = [
 
 const home = (props: Props) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState("home"); // Add page state
+
+  // If notifications page is active, render it
+  if (currentPage === "notifications") {
+    return <notifications onBack={() => setCurrentPage("home")} />;
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -35,7 +40,11 @@ const home = (props: Props) => {
                 <TouchableOpacity key={item.label} style={styles.menuItem}>
                   <Image source={item.icon} style={styles.menuItemIcon} />
                   <Text style={styles.menuItemText}>{item.label}</Text>
-                  <Text style={styles.menuItemArrow}>{">"}</Text>
+
+                  <Image
+                    source={require("../assets/images/leftArrow.png")}
+                    style={styles.menuItemArrow}
+                  />
                 </TouchableOpacity>
               ))}
             </View>
@@ -78,6 +87,42 @@ const home = (props: Props) => {
           source={require("../assets/images/columns.png")}
           style={styles.columns}
         />
+      </View>
+      <TouchableOpacity style={styles.button}>
+        <View>
+          <Text style={styles.buttonText}>Check Your {"\n"} Bank Accounts</Text>
+          <Image
+            source={require("../assets/images/leftArrow.png")}
+            style={styles.menuItemArrow}
+          />
+        </View>
+      </TouchableOpacity>
+      {/* Bottom Tab Bar */}
+      <View style={styles.tabBar}>
+        <TouchableOpacity
+          style={[styles.tabItem, currentPage === "home" && styles.activeTab]}
+        >
+          <Image
+            source={require("../assets/images/wallet.png")}
+            style={styles.tabIcon}
+          />
+          {currentPage === "home" && <View style={styles.activeIndicator} />}
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.tabItem}
+          onPress={() => setCurrentPage("notifications")} // Add navigation
+        >
+          <Image
+            source={require("../assets/images/notifications.png")}
+            style={styles.tabIcon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem}>
+          <Image
+            source={require("../assets/images/profile.png")}
+            style={styles.tabIcon}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -189,13 +234,12 @@ const styles = StyleSheet.create({
   menuItemsSection: {
     flex: 1,
     marginBottom: 24,
+    gap: 22,
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 14,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#eee",
   },
   menuItemIcon: {
     width: 20,
@@ -204,33 +248,79 @@ const styles = StyleSheet.create({
   },
   menuItemText: {
     flex: 1,
-    fontSize: 16,
-    color: "#222",
+    fontSize: 18,
+    color: "#2B47FC",
   },
   menuItemArrow: {
     fontSize: 18,
     color: "#2B47FC",
     marginLeft: 8,
+    width: 7,
+    height: 12,
   },
   menuSignOutBtn: {
     flexDirection: "row",
-    alignItems: "center",
+    justifyContent: "space-between",
     borderWidth: 1,
-    borderColor: "#4950F9",
-    borderRadius: 20,
-    paddingVertical: 10,
+    borderColor: "#556BFF",
+    borderRadius: 28,
+    paddingVertical: 20,
     paddingHorizontal: 24,
-    alignSelf: "flex-start",
-    marginBottom: 24,
+    marginBottom: 70,
+    width: "100%",
   },
   menuSignOutText: {
-    color: "#4950F9",
-    fontWeight: "500",
-    fontSize: 16,
+    color: "#556BFF",
+    fontSize: 18,
     marginRight: 8,
   },
   menuSignOutIcon: {
     width: 20,
     height: 20,
+  },
+  tabBar: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 10,
+    paddingVertical: 35,
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+  activeTab: {
+    // Active tab styling
+  },
+  tabIcon: {
+    width: 21,
+    height: 25,
+    resizeMode: "contain",
+  },
+  activeIndicator: {
+    position: "absolute",
+    bottom: -35,
+    width: 40,
+    height: 3,
+    backgroundColor: "#6B7CFF",
+    borderRadius: 2,
+  },
+  button: {
+    backgroundColor: "#6075FF",
+    paddingVertical: 35,
+    marginHorizontal: 39,
+    borderRadius: 40,
+    paddingHorizontal: 33,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 25,
   },
 });
