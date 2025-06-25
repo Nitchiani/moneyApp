@@ -9,7 +9,8 @@ import {
 } from "react-native";
 
 type Props = {
-  onBack?: () => void;
+  setCurrentPage: (page: string) => void;
+  currentPage: string;
 };
 
 const NOTIFICATIONS = [
@@ -60,27 +61,6 @@ const NOTIFICATIONS = [
 const Notifications = (props: Props) => {
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.time}>9:41</Text>
-        <View style={styles.statusBar}>
-          <View style={styles.signalBars}>
-            <View style={[styles.bar, styles.bar1]} />
-            <View style={[styles.bar, styles.bar2]} />
-            <View style={[styles.bar, styles.bar3]} />
-            <View style={[styles.bar, styles.bar4]} />
-          </View>
-          <View style={styles.wifiIcon}>
-            <Text style={styles.wifiText}>📶</Text>
-          </View>
-          <View style={styles.batteryContainer}>
-            <View style={styles.battery}>
-              <View style={styles.batteryLevel} />
-            </View>
-          </View>
-        </View>
-      </View>
-
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
@@ -128,24 +108,35 @@ const Notifications = (props: Props) => {
 
       {/* Bottom Tab Bar */}
       <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabItem} onPress={props.onBack}>
+        <TouchableOpacity
+          style={[styles.tabItem, props.currentPage === "home" && styles.activeTab]}
+          onPress={() => props.setCurrentPage("home")}
+        >
           <Image
             source={require("../assets/images/wallet.png")}
             style={styles.tabIcon}
           />
+          {props.currentPage === "home" && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.tabItem, styles.activeTab]}>
+        <TouchableOpacity
+          style={[styles.tabItem, props.currentPage === "notifications" && styles.activeTab]}
+          onPress={() => props.setCurrentPage("notifications")}
+        >
           <Image
             source={require("../assets/images/notifications.png")}
             style={[styles.tabIcon, styles.activeTabIcon]}
           />
-          <View style={styles.activeIndicator} />
+          {props.currentPage === "notifications" && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity
+          style={[styles.tabItem, props.currentPage === "profile" && styles.activeTab]}
+          onPress={() => props.setCurrentPage("profile")}
+        >
           <Image
             source={require("../assets/images/profile.png")}
             style={styles.tabIcon}
           />
+          {props.currentPage === "profile" && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
       </View>
     </View>
@@ -159,147 +150,78 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F8F9FF",
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 10,
-  },
-  time: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: "#000",
-  },
-  statusBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  signalBars: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    gap: 2,
-  },
-  bar: {
-    width: 3,
-    backgroundColor: "#000",
-    borderRadius: 1,
-  },
-  bar1: {
-    height: 4,
-  },
-  bar2: {
-    height: 6,
-  },
-  bar3: {
-    height: 8,
-  },
-  bar4: {
-    height: 10,
-  },
-  wifiIcon: {
-    marginLeft: 4,
-  },
-  wifiText: {
-    fontSize: 12,
-  },
-  batteryContainer: {
-    marginLeft: 2,
-  },
-  battery: {
-    width: 24,
-    height: 12,
-    borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 2,
-    position: "relative",
-  },
-  batteryLevel: {
-    position: "absolute",
-    left: 1,
-    top: 1,
-    bottom: 1,
-    width: "80%",
-    backgroundColor: "#000",
-    borderRadius: 1,
-  },
+
   searchContainer: {
-    paddingHorizontal: 20,
-    marginTop: 10,
-    marginBottom: 20,
+    paddingTop: 84,
+    paddingHorizontal: 37,
+    marginBottom: 40,
   },
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F0F2FF",
-    borderRadius: 12,
-    paddingHorizontal: 16,
+    backgroundColor: "#F5F6FA",
+    borderRadius: 10,
+    paddingHorizontal: 12,
     paddingVertical: 12,
   },
   searchIcon: {
     width: 16,
     height: 16,
-    marginRight: 8,
-    tintColor: "#8B9CFF",
+    marginRight: 10,
+    tintColor: "#3D56FA",
   },
   searchPlaceholder: {
-    color: "#8B9CFF",
+    color: "#3D56FA",
     fontSize: 16,
   },
   titleContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 30,
+    paddingHorizontal: 30,
+    marginBottom: 40,
   },
   title: {
     fontSize: 24,
-    fontWeight: "600",
-    color: "#1A1D29",
-    lineHeight: 32,
+    fontWeight: "700",
+    color: "#3A3A3A",
   },
   notificationsList: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 29,
   },
   notificationItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
     marginBottom: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.03,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: "#DEE1EF",
+    paddingBottom: 20,
   },
   notificationAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    marginRight: 12,
+    width: 43.99,
+    height: 44.49,
+    borderRadius: 10.77,
+    marginRight: 16,
+    shadowColor: "#00000033",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 1.72 },
+    shadowRadius: 8.62,
+    elevation: 2,
   },
   notificationContent: {
     flex: 1,
   },
   notificationName: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#1A1D29",
+    color: "#000000",
     marginBottom: 4,
   },
   notificationMessage: {
-    fontSize: 14,
-    color: "#6B7CFF",
-    lineHeight: 18,
+    fontSize: 16,
+    color: "#3D56FA",
   },
   notificationArrow: {
-    width: 8,
-    height: 14,
-    tintColor: "#6B7CFF",
+    width: 10,
+    height: 18,
+    tintColor: "#3D56FA",
   },
   tabBar: {
     flexDirection: "row",

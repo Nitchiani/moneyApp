@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Notifications from "./notifications"; // Import notifications component
+import WhiteProfile from "./whiteProfile";
+
 type Props = {};
 
 const MENU_ITEMS = [
@@ -16,7 +19,12 @@ const home = (props: Props) => {
 
   // If notifications page is active, render it
   if (currentPage === "notifications") {
-    return <notifications onBack={() => setCurrentPage("home")} />;
+    return <Notifications setCurrentPage={setCurrentPage} currentPage={currentPage} />;
+  }
+  if (currentPage === "profile") {
+    return (
+      <WhiteProfile setCurrentPage={setCurrentPage} currentPage={currentPage} />
+    );
   }
 
   return (
@@ -101,6 +109,7 @@ const home = (props: Props) => {
       <View style={styles.tabBar}>
         <TouchableOpacity
           style={[styles.tabItem, currentPage === "home" && styles.activeTab]}
+          onPress={() => setCurrentPage("home")}
         >
           <Image
             source={require("../assets/images/wallet.png")}
@@ -110,18 +119,25 @@ const home = (props: Props) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.tabItem}
-          onPress={() => setCurrentPage("notifications")} // Add navigation
+          onPress={() => setCurrentPage("notifications")}
         >
           <Image
             source={require("../assets/images/notifications.png")}
             style={styles.tabIcon}
           />
+          {currentPage === "notifications" && (
+            <View style={styles.activeIndicator} />
+          )}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity
+          style={styles.tabItem}
+          onPress={() => setCurrentPage("profile")}
+        >
           <Image
             source={require("../assets/images/profile.png")}
             style={styles.tabIcon}
           />
+          {currentPage === "profile" && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
       </View>
     </View>
